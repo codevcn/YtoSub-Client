@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import ReactPlayer from 'react-player'
-import { videoService } from '../services/video.service'
 import { Icon } from '../components/common/Icon'
 import { LoadingDots } from '../components/common/Loading'
 import { Tooltip } from '../components/common/Tooltip'
-import type { TranslateVideoResponse } from '../types/video'
 import { storage } from '../utils/local-storage'
+import { useTranslateStream } from '../hooks/use-translate-stream'
+import type { StreamStatus, TranslateEventSnapshot } from '../hooks/use-translate-stream'
+import type { DoneEventData } from '../types/video'
 
 const summaryExample = `- Title: The Super Mario Bros. Movie | Official Trailer
 - Genre: Phiêu lưu
@@ -21,17 +22,111 @@ Khi sự việc tiếp diễn, Mario được cổ vũ tiến lên vì "cuộc p
 function isValidYoutubeUrl(url: string): boolean {
   return /^https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+/.test(url)
 }
+type TranslateProgressPanelProps = {
+  status: StreamStatus
+  eventSnapshot: TranslateEventSnapshot | null
+  result: DoneEventData | null
+  error: string | null
+}
 
+function TranslateProgressPanel({ status, eventSnapshot, result, error }: TranslateProgressPanelProps) {
+  const percent = eventSnapshot?.percent ?? 0
+  const isLoading = status === 'pending' || status === 'translating'
+
+  return (
+    <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 py-4 px-2 flex flex-col gap-4">
+      <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100">Tiến độ dịch</h2>
+
+      {/* Idle / pending initial state */}
+      {status === 'pending' && !eventSnapshot && (
+        <div className="flex flex-col gap-3">
+          <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
+            <div className="bg-(--main-cl) h-2 rounded-full w-1/6 animate-pulse" />
+          </div>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center">
+            Đang gửi yêu cầu tới server...
+          </p>
+        </div>
+      )}
+
+      {/* In-progress: pending with snapshot or translating */}
+      {isLoading && eventSnapshot && (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+            <span>{eventSnapshot.message}</span>
+            <span className="font-mono font-medium text-zinc-700 dark:text-zinc-200 shrink-0 ml-2">
+              {percent}%
+            </span>
+          </div>
+          <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
+            <div
+              className="bg-(--main-cl) h-2 rounded-full transition-all duration-500"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Translating but no snapshot yet (start event not received) */}
+      {status === 'translating' && !eventSnapshot && (
+        <div className="flex flex-col gap-3">
+          <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
+            <div className="bg-(--main-cl) h-2 rounded-full w-1/6 animate-pulse" />
+          </div>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center">
+            Đang khởi tạo pipeline dịch...
+          </p>
+        </div>
+      )}
+
+      {/* Done */}
+      {status === 'done' && eventSnapshot && result && (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+            <span>{eventSnapshot.message}</span>
+            <span className="font-mono font-medium text-green-600 dark:text-green-400 shrink-0 ml-2">
+              {percent}%
+            </span>
+          </div>
+          <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
+            <div className="bg-green-500 h-2 rounded-full w-full transition-all duration-500" />
+          </div>
+          <div className="mt-1 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-900/30 flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
+              <Icon name="check" size={16} className="shrink-0" />
+              <span>Hoàn thành!</span>
+            </div>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              Video ID: <span className="font-mono text-zinc-700 dark:text-zinc-300">{result.video_id}</span>
+            </p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 break-all">
+              File: <span className="font-mono text-zinc-700 dark:text-zinc-300">{result.output_file}</span>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Error */}
+      {status === 'error' && (
+        <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg flex items-start gap-2 text-sm border border-red-100 dark:border-red-900/30">
+          <Icon name="info" size={16} className="mt-0.5 shrink-0" />
+          <span>{error ?? 'Đã xảy ra lỗi không xác định.'}</span>
+        </div>
+      )}
+    </div>
+  )
+}
 export function TranslatePage() {
   const [videoUrl, setVideoUrl] = useState('')
   const [videoSummary, setVideoSummary] = useState('')
-  const [result, setResult] = useState<TranslateVideoResponse | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
   const [urlError, setUrlError] = useState<string | null>(null)
   const [username, setUsername] = useState('')
   const [usernameError, setUsernameError] = useState<string | null>(null)
   const [showExamplePopup, setShowExamplePopup] = useState(false)
+
+  const { status, eventSnapshot, result, error, start, cancel } = useTranslateStream()
+  const loading = status === 'pending' || status === 'translating'
+  const hasActivity = status !== 'idle'
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value
@@ -51,7 +146,7 @@ export function TranslatePage() {
     storage.set('ytosub:username', value)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!isValidYoutubeUrl(videoUrl)) {
@@ -59,27 +154,18 @@ export function TranslatePage() {
       return
     }
 
-    if (username.trim() && !/^[a-zA-Z0-9_]{3,16}$/.test(username.trim())) {
-      setUsernameError('Username chỉ gồm chữ cái, số, dấu gạch dưới và có độ dài 3–16 ký tự.')
+    if (username.trim() && !/^[a-zA-Z0-9_-]{2,18}$/.test(username.trim())) {
+      setUsernameError('Username chỉ gồm chữ cái, số, dấu gạch dưới/ngang và có độ dài 2–18 ký tự.')
       return
     }
 
-    setLoading(true)
-    setError(null)
-    setResult(null)
     setUrlError(null)
 
-    try {
-      const data = await videoService.translateVideo({
-        video_url: videoUrl,
-        video_summary: videoSummary.trim() || undefined
-      })
-      setResult(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Lỗi không xác định')
-    } finally {
-      setLoading(false)
-    }
+    start({
+      video_url: videoUrl,
+      username: username.trim() || 'anonymous_user',
+      video_summary: videoSummary.trim() || undefined
+    })
   }
 
   const handleOpenExample = () => setShowExamplePopup(true)
@@ -105,171 +191,187 @@ export function TranslatePage() {
   }, [])
 
   return (
-    <main className="max-w-2xl mx-auto px-4 mt-6">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 mb-1">Dịch Phụ Đề</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Nhập URL video YouTube để dịch phụ đề sang tiếng Việt.
-        </p>
-      </div>
+    <main className="px-4 mt-6 max-w-7xl mx-auto">
+      {/* 2-panel on desktop (≥900px), stacked on mobile */}
+      <div className="flex flex-col mobile:flex-row mobile:items-start gap-6">
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 flex flex-col gap-4"
-      >
-        {/* Username */}
-        <div>
-          <label
-            htmlFor="username"
-            className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
-          >
-            <span>Username</span>
-            <span className="text-zinc-400 dark:text-zinc-400 font-normal">(tuỳ chọn)</span>
-            <Tooltip
-              content="Tên định danh của bạn. Chỉ gồm chữ cái, số, dấu gạch dưới (3-16 ký tự)."
-              placement="bottom"
-            >
-              <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
-            </Tooltip>
-          </label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={handleUsernameChange}
-            placeholder="vd: my_username"
-            disabled={loading}
-            className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          {usernameError && (
-            <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
-              <Icon name="info" size={13} className="shrink-0" />
-              {usernameError}
+        {/* ── LEFT / TOP: Form section ── */}
+        <div className="w-full mobile:max-w-2xl mobile:shrink-0">
+          <div className="mb-4">
+            <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 mb-1">Dịch Phụ Đề</h1>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              Nhập URL video YouTube để dịch phụ đề sang tiếng Việt.
             </p>
-          )}
-        </div>
-
-        {/* YouTube URL */}
-        <div>
-          <label
-            htmlFor="video-url"
-            className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
-          >
-            <span>YouTube URL</span>
-            <span className="text-red-500">*</span>
-            <Tooltip
-              content="Dán URL video YouTube cần dịch. Hỗ trợ youtube.com/watch?v=... và youtu.be/..."
-              placement="bottom"
-            >
-              <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
-            </Tooltip>
-          </label>
-          <input
-            id="video-url"
-            type="text"
-            value={videoUrl}
-            onChange={handleUrlChange}
-            placeholder="https://www.youtube.com/watch?v=..."
-            disabled={loading}
-            className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          {urlError && (
-            <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
-              <Icon name="info" size={13} className="shrink-0" />
-              {urlError}
-            </p>
-          )}
-        </div>
-
-        {/* Video preview */}
-        {isValidYoutubeUrl(videoUrl) && (
-          <div className="w-full rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700 aspect-video bg-black">
-            <ReactPlayer src={videoUrl} width="100%" height="100%" controls={true} light={true} />
           </div>
-        )}
 
-        {/* Summary */}
-        <div>
-          <label
-            htmlFor="video-summary"
-            className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 py-4 px-2 flex flex-col gap-4"
           >
-            <span>Tóm tắt nội dung</span>
-            <span className="text-zinc-400 dark:text-zinc-400 font-normal">(tuỳ chọn)</span>
-            <Tooltip
-              content="Cung cấp ngữ cảnh giúp AI dịch chính xác hơn tên nhân vật, thuật ngữ và chủ đề video."
-              placement="bottom"
-            >
-              <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
-            </Tooltip>
-          </label>
-          <textarea
-            id="video-summary"
-            value={videoSummary}
-            onChange={handleSummaryChange}
-            placeholder="Tóm tắt video để cải thiện chất lượng dịch..."
-            rows={6}
-            disabled={loading}
-            className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          {/* Summary hint */}
-          <div className="border-l-4 border-yellow-500 mt-2 p-3 bg-zinc-50 dark:bg-zinc-900/60 outline-2 outline-yellow-500 dark:outline-yellow-500 rounded-lg text-xs text-zinc-500 dark:text-zinc-400">
-            <p className="font-medium text-zinc-600 dark:text-zinc-300 mb-1">
-              Thêm bản tóm tắt sẽ giúp bản phụ đề được dịch chính xác hơn. Bản tóm tắt nên được viết theo cấu trúc sau:
-            </p>
-            <ul className="list-disc pl-4 space-y-0.5">
-              <li>Title:</li>
-              <li>Genre:</li>
-              <li>Main Characters:</li>
-              <li>Theme:</li>
-              <li>Summary (theo video timeline)</li>
-            </ul>
+            {/* Username */}
+            <div>
+              <label
+                htmlFor="username"
+                className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+              >
+                <span>Username</span>
+                <span className="text-zinc-400 dark:text-zinc-400 font-normal">(tuỳ chọn)</span>
+                <Tooltip
+                  content="Tên định danh của bạn. Chỉ gồm chữ cái, số, dấu gạch dưới (3-16 ký tự)."
+                  placement="bottom"
+                >
+                  <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+                </Tooltip>
+              </label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={handleUsernameChange}
+                placeholder="vd: my_username"
+                disabled={loading}
+                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              {usernameError && (
+                <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                  <Icon name="info" size={13} className="shrink-0" />
+                  {usernameError}
+                </p>
+              )}
+            </div>
+
+            {/* YouTube URL */}
+            <div>
+              <label
+                htmlFor="video-url"
+                className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+              >
+                <span>YouTube URL</span>
+                <span className="text-red-500">*</span>
+                <Tooltip
+                  content="Dán URL video YouTube cần dịch. Hỗ trợ youtube.com/watch?v=... và youtu.be/..."
+                  placement="bottom"
+                >
+                  <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+                </Tooltip>
+              </label>
+              <input
+                id="video-url"
+                type="text"
+                value={videoUrl}
+                onChange={handleUrlChange}
+                placeholder="https://www.youtube.com/watch?v=..."
+                disabled={loading}
+                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              {urlError && (
+                <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                  <Icon name="info" size={13} className="shrink-0" />
+                  {urlError}
+                </p>
+              )}
+            </div>
+
+            {/* Video preview */}
+            {isValidYoutubeUrl(videoUrl) && (
+              <div className="w-full rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700 aspect-video bg-black">
+                <ReactPlayer src={videoUrl} width="100%" height="100%" controls={true} light={true} />
+              </div>
+            )}
+
+            {/* Summary */}
+            <div>
+              <label
+                htmlFor="video-summary"
+                className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+              >
+                <span>Tóm tắt nội dung</span>
+                <span className="text-zinc-400 dark:text-zinc-400 font-normal">(tuỳ chọn)</span>
+                <Tooltip
+                  content="Cung cấp ngữ cảnh giúp AI dịch chính xác hơn tên nhân vật, thuật ngữ và chủ đề video."
+                  placement="bottom"
+                >
+                  <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+                </Tooltip>
+              </label>
+              <textarea
+                id="video-summary"
+                value={videoSummary}
+                onChange={handleSummaryChange}
+                placeholder="Tóm tắt video để cải thiện chất lượng dịch..."
+                rows={6}
+                disabled={loading}
+                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              {/* Summary hint */}
+              <div className="border-l-4 border-yellow-500 mt-2 p-3 bg-zinc-50 dark:bg-zinc-900/60 outline-2 outline-yellow-500 dark:outline-yellow-500 rounded-lg text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="font-medium text-zinc-600 dark:text-zinc-300 mb-1">
+                  Thêm bản tóm tắt sẽ giúp bản phụ đề được dịch chính xác hơn. Bản tóm tắt nên được viết theo cấu trúc sau:
+                </p>
+                <ul className="list-disc pl-4 space-y-0.5">
+                  <li>Title:</li>
+                  <li>Genre:</li>
+                  <li>Main Characters:</li>
+                  <li>Theme:</li>
+                  <li>Summary (theo video timeline)</li>
+                </ul>
+                <button
+                  type="button"
+                  onClick={handleOpenExample}
+                  className="mt-2 flex items-center gap-1 text-xs font-bold text-(--main-cl) hover:underline"
+                >
+                  <Icon name="info" size={13} className="shrink-0" />
+                  Xem ví dụ bản tóm tắt
+                </button>
+              </div>
+            </div>
+
+            {/* Submit */}
             <button
-              type="button"
-              onClick={handleOpenExample}
-              className="mt-2 flex items-center gap-1 text-xs font-medium text-(--main-cl) hover:underline"
+              type="submit"
+              disabled={loading || !videoUrl.trim()}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-(--main-cl) hover:bg-(--main-cl-hover) text-black rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Icon name="info" size={13} className="shrink-0" />
-              Xem ví dụ bản tóm tắt
+              {loading ? (
+                <LoadingDots />
+              ) : (
+                <>
+                  <Icon name="play" size={16} />
+                  <span>Dịch phụ đề</span>
+                </>
+              )}
             </button>
+
+            {loading && (
+              <button
+                type="button"
+                onClick={cancel}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-zinc-700 dark:text-zinc-200 rounded-lg font-medium transition-colors"
+              >
+                <Icon name="close" size={16} />
+                <span>Huỷ</span>
+              </button>
+            )}
+          </form>
+        </div>
+
+        {/* ── RIGHT / BOTTOM: Progress section — always rendered when has activity ── */}
+        {hasActivity && (
+          <div className="w-full mobile:flex-1 mobile:sticky mobile:top-6">
+            <TranslateProgressPanel
+              status={status}
+              eventSnapshot={eventSnapshot}
+              result={result}
+              error={error}
+            />
           </div>
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading || !videoUrl.trim()}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-(--main-cl) hover:bg-(--main-cl-hover) text-black rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <LoadingDots />
-          ) : (
-            <>
-              <Icon name="play" size={16} />
-              <span>Dịch phụ đề</span>
-            </>
-          )}
-        </button>
-
-        {loading && (
-          <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-            Đang xử lý, vui lòng không tắt trang. Quá trình có thể mất vài phút...
-          </p>
         )}
-      </form>
-
-      {/* Error */}
-      {error && (
-        <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg flex items-start gap-2 text-sm border border-red-100 dark:border-red-900/30">
-          <Icon name="info" size={16} className="mt-0.5 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      </div>
 
       {/* Example popup */}
       {showExamplePopup && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-2"
           onClick={handleCloseExample}
         >
           <div
@@ -287,7 +389,7 @@ export function TranslatePage() {
                 <Icon name="close" size={20} />
               </button>
             </div>
-            <p className="overflow-y-auto grow text-xs text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 rounded-lg p-3 border border-zinc-200 dark:border-zinc-700 whitespace-pre-wrap leading-relaxed font-mono">
+            <p className="overflow-y-auto grow text-xs text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 rounded-lg py-3 px-2 border border-zinc-200 dark:border-zinc-700 whitespace-pre-wrap leading-relaxed font-mono">
               {summaryExample}
             </p>
             <button
@@ -298,22 +400,6 @@ export function TranslatePage() {
               Đóng
             </button>
           </div>
-        </div>
-      )}
-
-      {/* Success */}
-      {result && (
-        <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-900/30 flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
-            <Icon name="check" size={16} className="shrink-0" />
-            <span>{result.message}</span>
-          </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 pl-6">
-            Video ID: <span className="font-mono text-zinc-700 dark:text-zinc-300">{result.video_id}</span>
-          </p>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 pl-6 break-all">
-            File: <span className="font-mono text-zinc-700 dark:text-zinc-300">{result.output_file}</span>
-          </p>
         </div>
       )}
     </main>

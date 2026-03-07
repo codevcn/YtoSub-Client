@@ -45,15 +45,15 @@ function Navbar() {
                 end
                 onClick={() => handleNavItem(item.to)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors ${
+                  `flex items-center gap-3 px-5 py-3 text-sm transition-colors ${
                     isActive
-                      ? 'text-(--main-cl) bg-(--main-cl)/10'
-                      : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                      ? 'text-(--main-cl) bg-(--main-cl)/10 font-bold'
+                      : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 font-medium'
                   }`
                 }
               >
-                <Icon name="chevron-right" size={15} className="opacity-40 shrink-0" />
-                {item.label}
+                <Icon name="chevron-right" size={18} className="opacity-40 shrink-0" />
+                <span>{item.label}</span>
               </NavLink>
             </li>
           ))}
@@ -66,7 +66,7 @@ function Navbar() {
 export function AppHeader() {
   return (
     <header className="bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 relative top-0 z-50">
-      <div className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div className="px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
         <div className="flex items-center gap-3 font-app-logo-text text-2xl">
           <h1 className="text-xl font-bold tracking-tight text-zinc-800 dark:text-white">YtoSub</h1>
         </div>
@@ -75,4 +75,3 @@ export function AppHeader() {
     </header>
   )
 }
-

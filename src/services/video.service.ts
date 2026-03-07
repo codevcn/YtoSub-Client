@@ -12,7 +12,7 @@ class VideoService {
     const username = storage.get('ytosub:username') ?? DEFAULT_USERNAME
     const fullPayload: TranslateVideoRequest = { ...payload, username }
     try {
-      const { data } = await apiClient.post<TranslateVideoResponse>('video/translate', fullPayload, {
+      const { data } = await apiClient.post<TranslateVideoResponse>('/video/translate', fullPayload, {
         timeout: TRANSLATE_TIMEOUT_MS
       })
       return data
