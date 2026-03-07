@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type IconName = 'upload' | 'play' | 'info' | 'check' | 'close' | 'fullscreen' | 'fullscreen-exit' | 'arrow-up' | 'arrow-down' | 'chevron-right' | 'chevron-left' | 'bg-opacity';
+export type IconName = 'upload' | 'play' | 'info' | 'check' | 'close' | 'fullscreen' | 'fullscreen-exit' | 'arrow-up' | 'arrow-down' | 'chevron-right' | 'chevron-left' | 'bg-opacity' | 'menu';
 
 type IconProps = React.SVGProps<SVGSVGElement> & {
   name: IconName;
@@ -106,6 +106,14 @@ export function Icon({ name, size = 24, className, ...props }: IconProps) {
         <svg {...commonProps}>
           <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" />
           <path d="M12 3 A9 9 0 0 1 12 21 Z" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case 'menu':
+      return (
+        <svg {...commonProps}>
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
         </svg>
       );
     default:

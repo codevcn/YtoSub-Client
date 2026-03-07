@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import ReactPlayer from 'react-player'
 import { videoService } from '../services/video.service'
 import { Icon } from '../components/common/Icon'
 import { LoadingDots } from '../components/common/Loading'
+import { Tooltip } from '../components/common/Tooltip'
 import type { TranslateVideoResponse } from '../types/video'
 import { storage } from '../utils/local-storage'
 
@@ -27,6 +29,8 @@ export function TranslatePage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [urlError, setUrlError] = useState<string | null>(null)
+  const [username, setUsername] = useState('')
+  const [usernameError, setUsernameError] = useState<string | null>(null)
   const [showExamplePopup, setShowExamplePopup] = useState(false)
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,11 +44,23 @@ export function TranslatePage() {
     setVideoSummary(e.target.value)
   }
 
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setUsername(value)
+    setUsernameError(null)
+    storage.set('ytosub:username', value)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!isValidYoutubeUrl(videoUrl)) {
       setUrlError('URL không hợp lệ. Vui lòng nhập đường dẫn YouTube (youtube.com hoặc youtu.be).')
+      return
+    }
+
+    if (username.trim() && !/^[a-zA-Z0-9_]{3,16}$/.test(username.trim())) {
+      setUsernameError('Username chỉ gồm chữ cái, số, dấu gạch dưới và có độ dài 3–16 ký tự.')
       return
     }
 
@@ -76,8 +92,16 @@ export function TranslatePage() {
     }
   }
 
+  const initUsername = () => {
+    const saved = storage.get('ytosub:username')
+    if (typeof saved === 'string') {
+      setUsername(saved)
+    }
+  }
+
   useEffect(() => {
     initLastSummaryUrl()
+    initUsername()
   }, [])
 
   return (
@@ -93,10 +117,52 @@ export function TranslatePage() {
         onSubmit={handleSubmit}
         className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 flex flex-col gap-4"
       >
+        {/* Username */}
+        <div>
+          <label
+            htmlFor="username"
+            className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+          >
+            <span>Username</span>
+            <span className="text-zinc-400 dark:text-zinc-400 font-normal">(tuỳ chọn)</span>
+            <Tooltip
+              content="Tên định danh của bạn. Chỉ gồm chữ cái, số, dấu gạch dưới (3-16 ký tự)."
+              placement="bottom"
+            >
+              <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+            </Tooltip>
+          </label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={handleUsernameChange}
+            placeholder="vd: my_username"
+            disabled={loading}
+            className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          {usernameError && (
+            <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+              <Icon name="info" size={13} className="shrink-0" />
+              {usernameError}
+            </p>
+          )}
+        </div>
+
         {/* YouTube URL */}
         <div>
-          <label htmlFor="video-url" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-            YouTube URL <span className="text-red-500">*</span>
+          <label
+            htmlFor="video-url"
+            className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+          >
+            <span>YouTube URL</span>
+            <span className="text-red-500">*</span>
+            <Tooltip
+              content="Dán URL video YouTube cần dịch. Hỗ trợ youtube.com/watch?v=... và youtu.be/..."
+              placement="bottom"
+            >
+              <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+            </Tooltip>
           </label>
           <input
             id="video-url"
@@ -115,22 +181,39 @@ export function TranslatePage() {
           )}
         </div>
 
+        {/* Video preview */}
+        {isValidYoutubeUrl(videoUrl) && (
+          <div className="w-full rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700 aspect-video bg-black">
+            <ReactPlayer src={videoUrl} width="100%" height="100%" controls={true} light={true} />
+          </div>
+        )}
+
         {/* Summary */}
         <div>
-          <label htmlFor="video-summary" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-            Tóm tắt nội dung <span className="text-zinc-400 dark:text-zinc-500 font-normal">(tuỳ chọn)</span>
+          <label
+            htmlFor="video-summary"
+            className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+          >
+            <span>Tóm tắt nội dung</span>
+            <span className="text-zinc-400 dark:text-zinc-400 font-normal">(tuỳ chọn)</span>
+            <Tooltip
+              content="Cung cấp ngữ cảnh giúp AI dịch chính xác hơn tên nhân vật, thuật ngữ và chủ đề video."
+              placement="bottom"
+            >
+              <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+            </Tooltip>
           </label>
           <textarea
             id="video-summary"
             value={videoSummary}
             onChange={handleSummaryChange}
-            placeholder="Mô tả ngắn gọn nội dung video để cải thiện chất lượng dịch..."
+            placeholder="Tóm tắt video để cải thiện chất lượng dịch..."
             rows={6}
             disabled={loading}
             className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
           />
           {/* Summary hint */}
-          <div className="border-l-4 border-yellow-500 mt-2 p-3 bg-zinc-50 dark:bg-zinc-900/60 outline outline-yellow-500 dark:outline-yellow-500 rounded-lg text-xs text-zinc-500 dark:text-zinc-400">
+          <div className="border-l-4 border-yellow-500 mt-2 p-3 bg-zinc-50 dark:bg-zinc-900/60 outline-2 outline-yellow-500 dark:outline-yellow-500 rounded-lg text-xs text-zinc-500 dark:text-zinc-400">
             <p className="font-medium text-zinc-600 dark:text-zinc-300 mb-1">
               Thêm bản tóm tắt sẽ giúp bản phụ đề được dịch chính xác hơn. Bản tóm tắt nên được viết theo cấu trúc sau:
             </p>
@@ -190,7 +273,7 @@ export function TranslatePage() {
           onClick={handleCloseExample}
         >
           <div
-            className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 w-full max-w-lg p-6 flex flex-col gap-4"
+            className="h-[calc(100dvh-2rem)] max-h-screen flex flex-col bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 w-full max-w-lg p-6 gap-4"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
@@ -204,9 +287,9 @@ export function TranslatePage() {
                 <Icon name="close" size={20} />
               </button>
             </div>
-            <pre className="text-xs text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700 whitespace-pre-wrap leading-relaxed font-mono">
+            <p className="overflow-y-auto grow text-xs text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 rounded-lg p-3 border border-zinc-200 dark:border-zinc-700 whitespace-pre-wrap leading-relaxed font-mono">
               {summaryExample}
-            </pre>
+            </p>
             <button
               type="button"
               onClick={handleCloseExample}

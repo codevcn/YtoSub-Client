@@ -1,6 +1,7 @@
 type StorageSchema = {
   'ytosub:last-url': string
   'ytosub:last-summary-url': string
+  'ytosub:username': string
 }
 
 type StorageKey = keyof StorageSchema

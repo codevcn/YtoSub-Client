@@ -1,6 +1,7 @@
 export type TranslateVideoRequest = {
   video_url: string
   video_summary?: string
+  username: string
 }
 
 export type TranslateVideoResponse = {
