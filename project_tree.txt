@@ -1,0 +1,23 @@
+Tree view of: D:\D-Documents\TOOLs\subtitle-tool\youtube-player
+
+├── .gitignore
+├── README.md
+├── dev.cmd
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── print_project_tree.py
+├── project_tree.txt
+├── public
+│   └── vite.svg
+├── src
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── styles
+│       ├── _theme.scss
+│       └── index.scss
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts

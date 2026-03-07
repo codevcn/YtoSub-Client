@@ -1,0 +1,35 @@
+@font-face {
+  font-family: 'Lora';
+  /* Đường dẫn tương đối từ file index.css tới file font */
+  src: url('/assets/fonts/Lora/Lora-VariableFont_wght.ttf') format('truetype-variations');
+
+  /* Cấu hình cho Font Variable */
+  font-weight: 100 900; /* Cho phép trình duyệt chọn mọi độ dày từ 100 đến 900 */
+  font-style: normal;
+  font-display: swap; /* Giúp nội dung hiện ra ngay bằng font hệ thống khi đang tải font chính */
+}
+@font-face {
+  font-family: 'RocherColor';
+  /* Đường dẫn tương đối từ file index.css tới file font */
+  src: url('/assets/fonts/RocherColor/RocherColor-eaddc164.woff2') format('woff2');
+
+  /* Cấu hình cho Font Variable */
+  font-weight: 100 900; /* Cho phép trình duyệt chọn mọi độ dày từ 100 đến 900 */
+  font-style: normal;
+  font-display: swap; /* Giúp nội dung hiện ra ngay bằng font hệ thống khi đang tải font chính */
+}
+
+@theme {
+  /* Typography */
+  --font-sans: 'Lora', system-ui, sans-serif;
+  --font-heading: 'Lora', system-ui, sans-serif;
+  --font-app-logo-text: 'RocherColor', system-ui, sans-serif;
+
+  /* Colors */
+  --main-cl: #3cd1fe;
+  --main-cl-hover: #0fa6d4;
+  --secondary-cl: #1f1f1f;
+
+  /* Breaking points */
+  --breakpoint-mobile: 900px;
+}
