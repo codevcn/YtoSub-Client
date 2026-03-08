@@ -7,7 +7,7 @@ export const subtitleDefaults = {
 
 export const subtitleConstraints = {
   offsetYMin: 0,
-  offsetYMax: 200,
+  offsetYMax: 1000,
   fontSizeMin: 8,
   fontSizeMax: 32,
   bgOpacityMin: 0,

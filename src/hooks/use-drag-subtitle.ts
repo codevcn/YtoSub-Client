@@ -40,13 +40,11 @@ export function useDragSubtitle() {
 
   useEffect(() => {
     const dragEl = dragRef.current
-    console.log('>>> drag El:', dragEl)
     if (!dragEl) return
 
     let currentDeltaY = 0
 
     const onPointerDown = (e: PointerEvent) => {
-      console.log('>>> run this down')
       isDraggingRef.current = true
       startYRef.current = e.clientY
       currentDeltaY = 0
@@ -56,7 +54,6 @@ export function useDragSubtitle() {
     }
 
     const onPointerMove = (e: PointerEvent) => {
-      console.log('>>> run this move')
       if (!isDraggingRef.current) return
       currentDeltaY = e.clientY - startYRef.current
 
@@ -65,7 +62,6 @@ export function useDragSubtitle() {
     }
 
     const onPointerUp = (e: PointerEvent) => {
-      console.log('>>> run this up')
       if (!isDraggingRef.current) return
       isDraggingRef.current = false
       dragEl.releasePointerCapture(e.pointerId)
