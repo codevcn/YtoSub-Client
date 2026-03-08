@@ -39,7 +39,9 @@ export type ProgressEventData = {
 
 export type DoneEventData = {
   video_id: string
-  output_file: string
+  translate_file: string
+  summary_file: string | null
+  transcript_file: string
   percent: number
   message: string
 }

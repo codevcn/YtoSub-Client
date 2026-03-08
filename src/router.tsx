@@ -2,9 +2,10 @@ import { createBrowserRouter } from 'react-router-dom'
 import App from './App'
 import { HomePage } from './pages/HomePage'
 import { DevPage } from './dev/DevPage'
-import { TranslatePage } from './pages/TranslatePage'
+import { TranslatePage } from './pages/TranslatePage/TranslatePage'
 import { AboutPage } from './pages/AboutPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { MyFilesPage } from './pages/MyFilesPage'
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,16 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <TranslatePage />
+      }
+    ]
+  },
+  {
+    path: '/my-files',
+    element: <App />,
+    children: [
+      {
+        index: true,
+        element: <MyFilesPage />
       }
     ]
   },

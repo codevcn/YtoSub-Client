@@ -4,3 +4,5 @@ export type Subtitle = {
   end: number // in seconds
   text: string
 }
+
+export type DeviceType = 'desktop' | 'mobile'

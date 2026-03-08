@@ -19,3 +19,12 @@
     transform: scale(1);
   }
 }
+
+@keyframes stripe-slide {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 40px 0;
+  }
+}

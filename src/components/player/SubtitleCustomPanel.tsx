@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Icon } from '../common/Icon'
 import { useSubtitleStore } from '../../store/subtitle-store'
 import { subtitleConstraints } from '../../config/subtitle-config'
+import { moveSubtitleUp, moveSubtitleDown } from '../../hooks/use-drag-subtitle'
 
 type PanelView = 'main' | 'font-size' | 'bg-opacity'
 
@@ -12,7 +13,7 @@ type SubtitleCustomPanelProps = {
   showControls?: boolean
 }
 
-export function SubtitleCustomPanel({ showControls = false }: SubtitleCustomPanelProps) {
+export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [view, setView] = useState<PanelView>('main')
   const touchStartXRef = useRef<number | null>(null)
@@ -20,13 +21,11 @@ export function SubtitleCustomPanel({ showControls = false }: SubtitleCustomPane
   const [showButton, setShowButton] = useState(showControls)
 
   useEffect(() => {
-    setShowButton(showControls)
+    if (showControls !== undefined) setShowButton(showControls)
   }, [showControls])
 
-  const subtitleOffsetY = useSubtitleStore(s => s.subtitleOffsetY)
   const subtitleFontSize = useSubtitleStore(s => s.subtitleFontSize)
   const subtitleBgOpacity = useSubtitleStore(s => s.subtitleBgOpacity)
-  const setSubtitleOffsetY = useSubtitleStore(s => s.setSubtitleOffsetY)
   const setSubtitleFontSize = useSubtitleStore(s => s.setSubtitleFontSize)
   const setSubtitleBgOpacity = useSubtitleStore(s => s.setSubtitleBgOpacity)
 
@@ -57,13 +56,8 @@ export function SubtitleCustomPanel({ showControls = false }: SubtitleCustomPane
     setIsOpen(false)
   }
 
-  const handleMoveUp = () => {
-    setSubtitleOffsetY(Math.min(subtitleOffsetY + 1, subtitleConstraints.offsetYMax))
-  }
-
-  const handleMoveDown = () => {
-    setSubtitleOffsetY(Math.max(subtitleOffsetY - 1, subtitleConstraints.offsetYMin))
-  }
+  const handleMoveUp = () => moveSubtitleUp()
+  const handleMoveDown = () => moveSubtitleDown()
 
   const handleOpenFontSize = () => setView('font-size')
   const handleOpenBgOpacity = () => setView('bg-opacity')
@@ -99,8 +93,12 @@ export function SubtitleCustomPanel({ showControls = false }: SubtitleCustomPane
       {/* Visible tab handle — click to open (all devices) */}
       {!isOpen && (
         <button
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-(--main-cl) hover:bg-(--main-cl-hover) active:bg-(--main-cl-hover) text-black hover:text-white transition-colors rounded-r-md"
-          style={{ padding: '14px 3px', display: showButton ? 'block' : 'none' }}
+          id="button-open-subtitle-panel"
+          className="group-hover:block hidden absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-(--main-cl) hover:bg-(--main-cl-hover) active:bg-(--main-cl-hover) text-black hover:text-white transition-colors rounded-r-md"
+          style={{
+            padding: '14px 3px',
+            ...(showControls !== undefined ? { display: showButton ? 'block' : 'none' } : {})
+          }}
           onClick={openPanel}
           title="Subtitle settings"
         >

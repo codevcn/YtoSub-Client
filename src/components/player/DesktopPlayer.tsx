@@ -58,7 +58,7 @@ export function DesktopPlayer({ url, subtitles }: DesktopPlayerProps) {
       />
 
       {subtitles.length > 0 ? (
-        <SubtitleOverlay subtitles={subtitles} />
+        <SubtitleOverlay subtitles={subtitles} deviceType='desktop' />
       ) : (
         showUploadSubWarn && (
           <div
@@ -71,7 +71,7 @@ export function DesktopPlayer({ url, subtitles }: DesktopPlayerProps) {
         )
       )}
 
-      <SubtitleCustomPanel />
+      <SubtitleCustomPanel showControls={undefined} />
 
       <button
         onClick={handleFullscreenToggle}

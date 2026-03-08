@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef } from 'react'
 import type { StreamTranslateParams, StartEventData, ProgressEventData, DoneEventData } from '../types/video'
 import { apiClient } from '../config/api-config'
+import { mobileToastify } from '../dev/mobile/toastify'
+import { AxiosErrorHandler } from '../utils/axios-error-handler'
 
 export type StreamStatus = 'idle' | 'pending' | 'translating' | 'done' | 'error'
 
@@ -100,11 +102,12 @@ export function useTranslateStream(): UseTranslateStreamReturn {
         video_summary: params.video_summary ?? null
       })
       .catch(err => {
-        const detail = (err.response?.data as { detail?: string })?.detail ?? 'Không thể kết nối đến server.'
+        const detail = AxiosErrorHandler.handleError(err).message
         es.close()
         eventSourceRef.current = null
         setStatus('error')
         setError(detail)
+        mobileToastify.show(AxiosErrorHandler.handleErrorForMobile(err))
       })
   }, [])
 

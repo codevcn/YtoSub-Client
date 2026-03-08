@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { AppHeader } from './components/layout/AppHeader'
+import { MobileToaster } from './dev/mobile/Toaster'
 
 function App() {
   return (
@@ -13,9 +14,11 @@ function App() {
       <footer className="mt-auto py-8 text-center text-zinc-500 dark:text-zinc-400 text-sm">
         <p>Tương thích trên desktop, tablet và mobile.</p>
       </footer>
+
+      {/* Toaster */}
+      <MobileToaster />
     </div>
   )
 }
 
 export default App
-

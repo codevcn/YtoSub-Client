@@ -95,7 +95,7 @@ export function MobilePlayer({ url, subtitles }: MobilePlayerProps) {
         />
 
         {subtitles.length > 0 ? (
-          <SubtitleOverlay subtitles={subtitles} />
+          <SubtitleOverlay subtitles={subtitles} deviceType="mobile" />
         ) : (
           showUploadSubWarn && (
             <div

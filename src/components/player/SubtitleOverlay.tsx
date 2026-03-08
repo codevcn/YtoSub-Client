@@ -1,34 +1,34 @@
-import type { Subtitle } from '../../types/global'
-import { subtitleConfig } from '../../config/subtitle-config'
+import type { DeviceType, Subtitle } from '../../types/global'
+import { subtitleDefaults } from '../../config/subtitle-config'
 import { findSubtitleByTime } from '../../utils/algorithms'
 import { useSubtitleStore } from '../../store/subtitle-store'
+import { useDragSubtitle } from '../../hooks/use-drag-subtitle'
 
 type SubtitleOverlayProps = {
   subtitles: Subtitle[]
+  deviceType: DeviceType
 }
 
-export function SubtitleOverlay({ subtitles }: SubtitleOverlayProps) {
+export function SubtitleOverlay({ subtitles, deviceType }: SubtitleOverlayProps) {
   const currentTime = useSubtitleStore(s => s.currentTime)
-  const subtitleOffsetY = useSubtitleStore(s => s.subtitleOffsetY)
   const subtitleFontSize = useSubtitleStore(s => s.subtitleFontSize)
   const subtitleBgOpacity = useSubtitleStore(s => s.subtitleBgOpacity)
 
-  // Find current subtitle
+  // TRUYỀN outerRef VÀO HOOK
+  const { dragRef } = useDragSubtitle()
+
   const currentSubtitle = findSubtitleByTime(subtitles, currentTime)
 
-  if (!currentSubtitle) {
-    return null
-  }
-
-  const { padding } = subtitleConfig
+  const { padding, offsetY } = subtitleDefaults
 
   return (
     <div
-      className="absolute left-0 right-0 w-full flex justify-center pointer-events-none z-10"
-      style={{ bottom: `${subtitleOffsetY}px` }}
+      ref={dragRef}
+      className={`NAME-${deviceType} NAME-subtitle-overlay absolute bottom-3 left-0 right-0 w-full justify-center pointer-events-none z-10`}
+      style={{ transform: `translateY(${offsetY}px)`, display: currentSubtitle ? 'flex' : 'none' }}
     >
       <div
-        className="text-white text-center rounded max-w-[90%] md:max-w-[70%] lg:max-w-[60%] will-change-transform"
+        className="text-white text-center rounded max-w-[90%] md:max-w-[70%] lg:max-w-[60%] will-change-transform pointer-events-auto cursor-grab active:cursor-grabbing select-none"
         style={{
           fontSize: `${subtitleFontSize}px`,
           background: `rgba(0,0,0,${subtitleBgOpacity})`,
@@ -38,7 +38,7 @@ export function SubtitleOverlay({ subtitles }: SubtitleOverlayProps) {
           whiteSpace: 'pre-wrap',
           lineHeight: '1.4'
         }}
-        dangerouslySetInnerHTML={{ __html: currentSubtitle.text }}
+        dangerouslySetInnerHTML={{ __html: currentSubtitle?.text || '' }}
       />
     </div>
   )

@@ -1,7 +1,7 @@
 import { AxiosError, HttpStatusCode } from 'axios'
 import { EError } from './enums'
 
-class AxiosErrorHandler {
+export class AxiosErrorHandler {
   static handleError(originalError: AxiosError, defaultMessage = 'Data requirement failed...') {
     const error = {
       httpStatus: HttpStatusCode.InternalServerError,
@@ -33,5 +33,8 @@ class AxiosErrorHandler {
     }
     return error
   }
+
+  static handleErrorForMobile(originalError: AxiosError) {
+    return JSON.stringify(originalError, null, 2)
+  }
 }
-export const axiosErrorHandler = new AxiosErrorHandler()

@@ -1,14 +1,8 @@
-export const subtitleConfig = {
-  bottomOffset: '16px',
-  fontSize: '12px',
-  background: 'rgba(0,0,0,0.6)',
-  padding: '6px 8px'
-}
-
 export const subtitleDefaults = {
-  offsetY: 16,
+  offsetY: 0,
   fontSize: 12,
   bgOpacity: 0.6,
+  padding: '6px 8px'
 }
 
 export const subtitleConstraints = {
@@ -19,4 +13,5 @@ export const subtitleConstraints = {
   bgOpacityMin: 0,
   bgOpacityMax: 1,
   bgOpacityStep: 0.1,
+  translateStep: 1
 }
