@@ -128,7 +128,7 @@ export function TranslatePage() {
                   content="Tên định danh của bạn. Chỉ gồm chữ cái, số, dấu gạch dưới (3-16 ký tự)."
                   placement="bottom"
                 >
-                  <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+                  <Icon name="info" size={15} className="text-zinc-400 cursor-help shrink-0" />
                 </Tooltip>
               </label>
               <input
@@ -160,7 +160,7 @@ export function TranslatePage() {
                   content="Dán URL video YouTube cần dịch. Hỗ trợ youtube.com/watch?v=... và youtu.be/..."
                   placement="bottom"
                 >
-                  <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+                  <Icon name="info" size={15} className="text-zinc-400 cursor-help shrink-0" />
                 </Tooltip>
               </label>
               <input
@@ -199,7 +199,7 @@ export function TranslatePage() {
                   content="Cung cấp ngữ cảnh giúp AI dịch chính xác hơn tên nhân vật, thuật ngữ và chủ đề video."
                   placement="bottom"
                 >
-                  <Icon name="info" size={13} className="text-zinc-400 cursor-help shrink-0" />
+                  <Icon name="info" size={15} className="text-zinc-400 cursor-help shrink-0" />
                 </Tooltip>
               </label>
               <AutoSizeTextField

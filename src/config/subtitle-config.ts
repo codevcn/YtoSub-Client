@@ -2,12 +2,10 @@ export const subtitleDefaults = {
   offsetY: 0,
   fontSize: 12,
   bgOpacity: 0.6,
-  padding: '6px 8px'
 }
 
 export const subtitleConstraints = {
   offsetYMin: 0,
-  offsetYMax: 1000,
   fontSizeMin: 8,
   fontSizeMax: 32,
   bgOpacityMin: 0,

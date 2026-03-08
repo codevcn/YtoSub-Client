@@ -2,37 +2,39 @@ import { useRef, useEffect } from 'react'
 import { subtitleDefaults, subtitleConstraints } from '../config/subtitle-config'
 import { isMobileScreen } from '../utils/helpers'
 
-// Biến module lưu vị trí hiện tại
-let _bottomPx: number = subtitleDefaults.offsetY
+// Đổi tên biến cho đúng bản chất: lưu trữ giá trị của translateY
+let _translateY: number = subtitleDefaults.offsetY
 
-export function getSubtitleBottom(): number {
-  return _bottomPx
+export function getSubtitleTranslateY(): number {
+  return _translateY
 }
 
-// Hàm này dùng cho các nút bấm Up/Down trong Panel
-export function applyBottomToDOM(value: number): void {
-  // Tạm chấp nhận querySelector cho các nút bấm vì nó không kích hoạt liên tục
+export function applyTranslateYToDOM(value: number): void {
   const el = document.querySelector(
     '.NAME-subtitle-overlay' + (isMobileScreen() ? '.NAME-mobile' : '.NAME-desktop')
   ) as HTMLElement | null
+
   if (el) {
-    const clamped = Math.max(subtitleConstraints.offsetYMin, Math.min(subtitleConstraints.offsetYMax, value))
+    // Tùy logic bạn muốn giới hạn kéo lên/xuống mà dùng Min/Max phù hợp
+    // Ví dụ: giới hạn không cho kéo lên quá offsetYMin
+    const clamped = Math.max(subtitleConstraints.offsetYMin, value)
     el.style.transform = `translateY(${clamped}px)`
-    _bottomPx = clamped
+    _translateY = clamped
   }
 }
 
 export function moveSubtitleUp(): void {
-  applyBottomToDOM(_bottomPx - subtitleConstraints.translateStep)
+  // Di chuyển lên tức là translateY giảm (âm)
+  applyTranslateYToDOM(_translateY - subtitleConstraints.translateStep)
 }
 
 export function moveSubtitleDown(): void {
-  applyBottomToDOM(_bottomPx + subtitleConstraints.translateStep)
+  // Di chuyển xuống tức là translateY tăng (dương)
+  applyTranslateYToDOM(_translateY + subtitleConstraints.translateStep)
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
-// Nhận outerRef từ component để thao tác DOM trực tiếp mà không cần querySelector
 export function useDragSubtitle() {
   const dragRef = useRef<HTMLDivElement>(null)
   const isDraggingRef = useRef(false)
@@ -57,8 +59,9 @@ export function useDragSubtitle() {
       if (!isDraggingRef.current) return
       currentDeltaY = e.clientY - startYRef.current
 
-      // TỐI ƯU: Chỉ dùng GPU transform trong lúc kéo, không can thiệp Layout (bottom)
-      dragEl.style.transform = `translateY(${currentDeltaY}px)`
+      // FIX LỖI GIẬT VỊ TRÍ: Cộng dồn delta hiện tại với vị trí đã lưu trước đó
+      const nextY = _translateY + currentDeltaY
+      dragEl.style.transform = `translateY(${nextY}px)`
     }
 
     const onPointerUp = (e: PointerEvent) => {
@@ -66,12 +69,12 @@ export function useDragSubtitle() {
       isDraggingRef.current = false
       dragEl.releasePointerCapture(e.pointerId)
 
-      // 1. Tính toán vị trí bottom mới sau khi thả tay
-      const nextBottom = _bottomPx - currentDeltaY
-      const clamped = Math.max(subtitleConstraints.offsetYMin, Math.min(subtitleConstraints.offsetYMax, nextBottom))
+      // FIX LỖI NHẦM DẤU: Lưu lại vị trí bằng phép cộng
+      const clamped = _translateY + currentDeltaY
+      _translateY = clamped
 
-      // 2. Cập nhật biến module
-      _bottomPx = clamped
+      // Đảm bảo DOM chốt cứng ở vị trí cuối cùng
+      dragEl.style.transform = `translateY(${clamped}px)`
     }
 
     dragEl.addEventListener('pointerdown', onPointerDown)
@@ -85,7 +88,7 @@ export function useDragSubtitle() {
       dragEl.removeEventListener('pointerup', onPointerUp)
       dragEl.removeEventListener('pointercancel', onPointerUp)
     }
-  }, []) // Chạy lại effect nếu outerRef thay đổi
+  }, [])
 
   return { dragRef }
 }

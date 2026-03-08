@@ -19,7 +19,7 @@ export class AxiosErrorHandler {
         error.message = 'Invalid request'
       } else {
         error.isUserError = data_of_response.isUserException //check if is error due to user or not
-        error.message = data_of_response.message //update error message
+        error.message = data_of_response.message || data_of_response.detail //update error message
         if (error.message.length > EError.MAX_LENGTH_OF_API_ERROR_MESSAGE) {
           error.message = `${error.message.slice(0, EError.MAX_LENGTH_OF_API_ERROR_MESSAGE)}...`
         }

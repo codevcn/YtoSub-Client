@@ -1,16 +1,10 @@
 import { useState } from 'react'
 import { Icon } from '../components/common/Icon'
 import { downloadFile } from '../utils/download-file'
-
-type SrtFile = {
-  video_id: string
-  filename: string
-}
-
-type ListFilesResponse = {
-  username: string
-  files: SrtFile[]
-}
+import { fileService } from '../services/file.service'
+import type { SrtFileItem as SrtFile } from '../services/file.service'
+import { AxiosErrorHandler } from '../utils/axios-error-handler'
+import { isAxiosError } from 'axios'
 
 type PageState = 'idle' | 'loading' | 'done' | 'error'
 
@@ -226,33 +220,16 @@ export function MyFilesPage() {
     setFiles([])
     setSearchedUsername(username)
 
-    const baseUrl = import.meta.env.VITE_API_URL ?? ''
     try {
-      const response = await fetch(`${baseUrl}/file/list`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username })
-      })
-
-      if (!response.ok) {
-        let detail = `Lỗi ${response.status}`
-        try {
-          const body = await response.json()
-          detail = body.detail ?? detail
-        } catch {
-          // response không phải JSON
-        }
+      const files = await fileService.listFilesByUsername(username)
+      setFiles(files)
+      setPageState('done')
+    } catch (err: unknown) {
+      if (isAxiosError(err)) {
+        const detail = AxiosErrorHandler.handleError(err).message
         setErrorMessage(detail)
         setPageState('error')
-        return
       }
-
-      const data: ListFilesResponse = await response.json()
-      setFiles(data.files)
-      setPageState('done')
-    } catch {
-      setErrorMessage('Không thể kết nối tới server. Vui lòng thử lại.')
-      setPageState('error')
     }
   }
 
@@ -273,8 +250,10 @@ export function MyFilesPage() {
     try {
       await downloadFile(file.filename, file.video_id, searchedUsername)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Tải xuống thất bại.'
-      setDownloadErrors(prev => ({ ...prev, [file.filename]: message }))
+      if (isAxiosError(err)) {
+        const message = AxiosErrorHandler.handleError(err).message
+        setDownloadErrors(prev => ({ ...prev, [file.filename]: message }))
+      }
     } finally {
       setDownloadingFiles(prev => {
         const next = new Set(prev)

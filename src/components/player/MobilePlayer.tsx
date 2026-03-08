@@ -54,7 +54,7 @@ export function MobilePlayer({ url, subtitles }: MobilePlayerProps) {
 
   const handlePause = () => {
     isPlayingRef.current = false
-    showControlsPermanently()
+    showControlsTemporarily()
   }
 
   const handleEnded = () => {
