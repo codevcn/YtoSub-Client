@@ -3,14 +3,16 @@ import App from './App'
 import { HomePage } from './pages/HomePage'
 import { DevPage } from './dev/DevPage'
 import { TranslatePage } from './pages/TranslatePage/TranslatePage'
-import { AboutPage } from './pages/AboutPage'
+import { AboutPage } from './pages/AboutUsPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { MyFilesPage } from './pages/MyFilesPage'
+import { ErrorBoundary } from './components/common/ErrorBoundary'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         index: true,
@@ -21,6 +23,7 @@ export const router = createBrowserRouter([
   {
     path: '/dev',
     element: <App />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         index: true,
@@ -30,6 +33,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/translate',
+    errorElement: <ErrorBoundary />,
     element: <App />,
     children: [
       {
@@ -40,6 +44,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/my-files',
+    errorElement: <ErrorBoundary />,
     element: <App />,
     children: [
       {
@@ -50,6 +55,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/about',
+    errorElement: <ErrorBoundary />,
     element: <App />,
     children: [
       {
@@ -61,6 +67,7 @@ export const router = createBrowserRouter([
   {
     path: '*',
     element: <App />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         index: true,
