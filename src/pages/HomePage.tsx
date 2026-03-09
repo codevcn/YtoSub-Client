@@ -45,7 +45,7 @@ export function HomePage() {
 
       {/* Uploader Section */}
       <section>
-        <SubtitleUploader />
+        <SubtitleUploader videoUrl={youtubeUrl} />
       </section>
     </main>
   )
