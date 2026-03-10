@@ -18,6 +18,10 @@ export type IconName =
   | 'search'
   | 'file-text'
   | 'eye'
+  | 'user'
+  | 'calendar'
+  | 'globe'
+  | 'lock'
 
 type IconProps = React.SVGProps<SVGSVGElement> & {
   name: IconName
@@ -163,6 +167,37 @@ export function Icon({ name, size = 24, className, ...props }: IconProps) {
         <svg {...commonProps}>
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
           <circle cx="12" cy="12" r="3" />
+        </svg>
+      )
+    case 'user':
+      return (
+        <svg {...commonProps}>
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      )
+    case 'calendar':
+      return (
+        <svg {...commonProps}>
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      )
+    case 'globe':
+      return (
+        <svg {...commonProps}>
+          <circle cx="12" cy="12" r="10" />
+          <line x1="2" y1="12" x2="22" y2="12" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+      )
+    case 'lock':
+      return (
+        <svg {...commonProps}>
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
       )
     default:

@@ -15,6 +15,7 @@ export type SubtitleUploadRequest = {
   video_link: string
   is_public: boolean
   file: File
+  password?: string
 }
 
 export type SubtitleUploadResponse = {
@@ -38,6 +39,7 @@ class FileService {
     formData.append('username', params.username)
     formData.append('video_link', params.video_link)
     formData.append('is_public', String(params.is_public))
+    if (params.password) formData.append('password', params.password)
     formData.append('file', params.file)
 
     const { data } = await apiClient.post<SubtitleUploadResponse>('/subtitle/upload', formData, {

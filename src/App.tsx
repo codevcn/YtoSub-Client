@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { AppHeader } from './components/layout/AppHeader'
 import { MobileToaster } from './dev/mobile/Toaster'
+import { Toaster } from './components/common/Toaster'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
 
       {/* Toaster */}
       <MobileToaster />
+      <Toaster />
     </div>
   )
 }

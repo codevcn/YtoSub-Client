@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import { YouTubePlayer } from '../components/player/YouTubePlayer'
 import { SubtitleUploader } from '../components/player/SubtitleUploader'
+import { SubtitleBrowser } from '../components/player/SubtitleBrowser'
 import { storage } from '../utils/local-storage'
 
 const DEFAULT_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
 export function HomePage() {
-  const [youtubeUrl, setYoutubeUrl] = useState<string>(() =>
-    storage.getOrDefault('ytosub:last-url', DEFAULT_URL)
-  )
+  const [youtubeUrl, setYoutubeUrl] = useState<string>(() => storage.getOrDefault('ytosub:last-url', DEFAULT_URL))
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value
@@ -46,6 +45,11 @@ export function HomePage() {
       {/* Uploader Section */}
       <section>
         <SubtitleUploader videoUrl={youtubeUrl} />
+      </section>
+
+      {/* Subtitle Browser Section */}
+      <section className="px-4 pb-8">
+        <SubtitleBrowser videoUrl={youtubeUrl} />
       </section>
     </main>
   )
