@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { toast } from '../../utils/toast-store'
 import type { Toast } from '../../utils/toast-store'
@@ -56,13 +56,51 @@ type ToastItemProps = {
 }
 
 function ToastItem({ item }: ToastItemProps) {
+  const [progress, setProgress] = useState(100)
+  const remaining = useRef(item.duration)
+  const lastTick = useRef<number | null>(null)
+  const paused = useRef(false)
+  const rafId = useRef(0)
+
+  useEffect(() => {
+    if (item.duration <= 0) return
+
+    const tick = (now: number) => {
+      if (!paused.current) {
+        const delta = lastTick.current !== null ? now - lastTick.current : 0
+        remaining.current = Math.max(0, remaining.current - delta)
+        setProgress((remaining.current / item.duration) * 100)
+        if (remaining.current <= 0) {
+          toast.remove(item.id)
+          return
+        }
+      }
+      lastTick.current = now
+      rafId.current = requestAnimationFrame(tick)
+    }
+
+    rafId.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId.current)
+  }, [item.id, item.duration])
+
+  const handleMouseEnter = () => {
+    paused.current = true
+    lastTick.current = null
+  }
+
+  const handleMouseLeave = () => {
+    paused.current = false
+  }
+
   const handleClose = () => toast.remove(item.id)
 
   return (
     <div
       role="alert"
       aria-live="assertive"
-      className={`STYLE-toast-slide-in flex items-start gap-3 px-4 py-3 rounded-xl shadow-xl border min-w-64 max-w-sm w-full ${TYPE_STYLES[item.type]}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`STYLE-toast-slide-in relative overflow-hidden flex items-start gap-3 px-4 py-3 rounded-xl shadow-xl border min-w-64 max-w-sm w-full ${TYPE_STYLES[item.type]}`}
     >
       <span className="block shrink-0 my-auto">
         <ToastIcon type={item.type} />
@@ -78,6 +116,12 @@ function ToastItem({ item }: ToastItemProps) {
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
+      {item.duration > 0 && (
+        <div
+          className="absolute bottom-0 left-0 h-0.5 bg-white/40"
+          style={{ width: `${progress}%` }}
+        />
+      )}
     </div>
   )
 }

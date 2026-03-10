@@ -22,3 +22,7 @@
 .STYLE-sequential-dots-scale .STYLE-sequential-dot:nth-child(3) {
   animation-delay: 0.4s;
 }
+
+.STYLE-toast-slide-in {
+  animation: toast-slide-in 0.2s ease-out forwards;
+}

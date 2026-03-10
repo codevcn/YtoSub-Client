@@ -28,9 +28,6 @@ class ToastStore {
     const id = Math.random().toString(36).slice(2, 9)
     this._toasts = [...this._toasts, { id, message, type, duration }]
     this.notify()
-    if (duration > 0) {
-      setTimeout(() => this.remove(id), duration)
-    }
     return id
   }
 

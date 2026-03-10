@@ -8,6 +8,7 @@ import { parseSRT } from '../../utils/parse-SRT'
 import { useSubtitleStore } from '../../store/subtitle-store'
 import { AxiosErrorHandler } from '../../utils/axios-error-handler'
 import { toast } from '../../utils/toast-store'
+import { SUBTITLES_PAGE_SIZE } from '../../utils/constants'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -172,7 +173,7 @@ function SubtitleCard({ item, isApplying, onSelect, isSelected }: SubtitleCardPr
 
       {isApplying && (
         <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/80 dark:bg-zinc-900/80">
-          <LoadingDots />
+          <LoadingDots dotStyle={{ backgroundColor: 'var(--main-cl)' }} />
         </div>
       )}
 
@@ -374,7 +375,7 @@ export function SubtitleBrowser({ videoUrl }: SubtitleBrowserProps) {
   const [page, setPage] = useState(1)
   const [items, setItems] = useState<SubtitleListItem[]>([])
   const [total, setTotal] = useState(0)
-  const [pageSize, setPageSize] = useState(20)
+  const [pageSize, setPageSize] = useState(SUBTITLES_PAGE_SIZE)
   const [status, setStatus] = useState<BrowserStatus>('loading')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [selectedItem, setSelectedItem] = useState<SubtitleListItem | null>(null)
@@ -529,11 +530,12 @@ export function SubtitleBrowser({ videoUrl }: SubtitleBrowserProps) {
   if (!videoId) return null
 
   const totalPages = Math.ceil(total / pageSize)
+  console.log('>>> totalPages:', { totalPages, total, pageSize, calc: Math.ceil(total / pageSize) })
   const selectCls =
     'h-9 px-3 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-sm text-zinc-700 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-(--main-cl) transition-all'
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-6 flex flex-col gap-5">
+    <div className="w-full max-w-full mx-auto mt-6 flex flex-col gap-5">
       {/* Section header */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 shrink-0">
@@ -612,7 +614,7 @@ export function SubtitleBrowser({ videoUrl }: SubtitleBrowserProps) {
 
       {/* Grid */}
       {status === 'done' && items.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 mobile:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {items.map(item => (
             <SubtitleCard
               key={item.id}
