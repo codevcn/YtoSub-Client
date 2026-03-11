@@ -535,7 +535,7 @@ export function SubtitleBrowser({ videoUrl }: SubtitleBrowserProps) {
     'h-9 px-3 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-sm text-zinc-700 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-(--main-cl) transition-all'
 
   return (
-    <div className="w-full max-w-full mx-auto mt-6 flex flex-col gap-5">
+    <div className="w-full max-w-full px-4 mx-auto mt-6 flex flex-col gap-5">
       {/* Section header */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 shrink-0">
