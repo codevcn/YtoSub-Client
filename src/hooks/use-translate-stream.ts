@@ -56,24 +56,28 @@ export function useTranslateStream(): UseTranslateStreamReturn {
 
     // Bước 1: Thiết lập SSE trước để không bỏ sót event start
     // Server buffer events trong Queue nên SSE kết nối trước POST là an toàn
-    const baseUrl = import.meta.env.VITE_API_URL ?? ''
+    const baseUrl = import.meta.env.VITE_API_URL || ''
+    console.log('>>> [sse] Base URL:', baseUrl)
     const sseQuery = new URLSearchParams({ username: params.username, video_id: videoId })
     const es = new EventSource(`${baseUrl}/video/sse?${sseQuery.toString()}`)
     eventSourceRef.current = es
 
     es.addEventListener('start', (e: MessageEvent) => {
       const data: StartEventData = JSON.parse(e.data)
+      console.log('>>> [sse] start data:', data)
       setEventSnapshot({ percent: data.percent, message: data.message })
       setStatus('translating')
     })
 
     es.addEventListener('progress', (e: MessageEvent) => {
       const data: ProgressEventData = JSON.parse(e.data)
+      console.log('>>> [sse] progress data:', data)
       setEventSnapshot({ percent: data.percent, message: data.message })
     })
 
     es.addEventListener('done', (e: MessageEvent) => {
       const data: DoneEventData = JSON.parse(e.data)
+      console.log('>>> [sse] done data:', data)
       setEventSnapshot({ percent: data.percent, message: data.message })
       setResult(data)
       setStatus('done')
@@ -82,6 +86,7 @@ export function useTranslateStream(): UseTranslateStreamReturn {
     })
 
     es.addEventListener('error', (e: MessageEvent) => {
+      console.log('>>> [sse] error data:', e.data)
       // Phân biệt lỗi nghiệp vụ từ server (có data) vs lỗi mất kết nối (không có data)
       if (e.data) {
         const data = JSON.parse(e.data)
