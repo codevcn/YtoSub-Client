@@ -41,7 +41,7 @@ export function DesktopPlayer({ url, subtitles }: DesktopPlayerProps) {
   return (
     <div
       ref={containerRef}
-      className={`mobile:block hidden relative h-[calc(100vh-18px)] aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group border border-zinc-800`}
+      className={`desktop:block hidden relative h-[calc(100vh-18px)] aspect-video bg-black rounded-xl overflow-hidden shadow-2xl group border border-zinc-800`}
     >
       <ReactPlayer
         src={url}
@@ -58,7 +58,7 @@ export function DesktopPlayer({ url, subtitles }: DesktopPlayerProps) {
       />
 
       {subtitles.length > 0 ? (
-        <SubtitleOverlay subtitles={subtitles} deviceType='desktop' />
+        <SubtitleOverlay subtitles={subtitles} deviceType="desktop" />
       ) : (
         showUploadSubWarn && (
           <div
@@ -75,7 +75,7 @@ export function DesktopPlayer({ url, subtitles }: DesktopPlayerProps) {
 
       <button
         onClick={handleFullscreenToggle}
-        title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+        title={isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'}
         className="hidden group-hover:block absolute bottom-1 right-3 z-20 cursor-pointer bg-(--main-cl) hover:bg-(--main-cl-hover) backdrop-blur-md text-black rounded-md p-1.5 transition-opacity duration-200 border border-white/30"
       >
         <Icon name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'} size={19} />

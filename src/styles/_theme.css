@@ -31,5 +31,5 @@
   --secondary-cl: #1f1f1f;
 
   /* Breaking points */
-  --breakpoint-mobile: 900px;
+  --breakpoint-desktop: 900px;
 }

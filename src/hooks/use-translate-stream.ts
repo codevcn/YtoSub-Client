@@ -9,6 +9,7 @@ export type StreamStatus = 'idle' | 'pending' | 'translating' | 'done' | 'error'
 export type TranslateEventSnapshot = {
   percent: number
   message: string
+  messages: string[]
 }
 
 export type UseTranslateStreamReturn = {
@@ -47,6 +48,9 @@ export function useTranslateStream(): UseTranslateStreamReturn {
     setResult(null)
     setError(null)
 
+    // Khởi tạo snapshot với mảng messages rỗng
+    setEventSnapshot({ percent: 0, message: '', messages: [] })
+
     const videoId = extractVideoId(params.video_url)
     if (!videoId) {
       setStatus('error')
@@ -65,20 +69,44 @@ export function useTranslateStream(): UseTranslateStreamReturn {
     es.addEventListener('start', (e: MessageEvent) => {
       const data: StartEventData = JSON.parse(e.data)
       console.log('>>> [sse] start data:', data)
-      setEventSnapshot({ percent: data.percent, message: data.message })
+      setEventSnapshot(prev => ({ 
+        percent: data.percent, 
+        message: data.message,
+        messages: prev?.messages ?? [] 
+      }))
       setStatus('translating')
     })
 
     es.addEventListener('progress', (e: MessageEvent) => {
       const data: ProgressEventData = JSON.parse(e.data)
       console.log('>>> [sse] progress data:', data)
-      setEventSnapshot({ percent: data.percent, message: data.message })
+      setEventSnapshot(prev => ({ 
+        percent: data.percent, 
+        message: data.message,
+        messages: prev?.messages ?? [] 
+      }))
+    })
+
+    es.addEventListener('message', (e: MessageEvent) => {
+      const data: { message: string } = JSON.parse(e.data)
+      console.log('>>> [sse] custom message data:', data)
+      setEventSnapshot(prev => {
+        if (!prev) return { percent: 0, message: '', messages: [data.message] }
+        return {
+          ...prev,
+          messages: [...prev.messages, data.message]
+        }
+      })
     })
 
     es.addEventListener('done', (e: MessageEvent) => {
       const data: DoneEventData = JSON.parse(e.data)
       console.log('>>> [sse] done data:', data)
-      setEventSnapshot({ percent: data.percent, message: data.message })
+      setEventSnapshot(prev => ({ 
+        percent: data.percent, 
+        message: data.message,
+        messages: prev?.messages ?? []
+      }))
       setResult(data)
       setStatus('done')
       es.close()

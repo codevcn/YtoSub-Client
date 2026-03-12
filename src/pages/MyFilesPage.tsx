@@ -32,7 +32,7 @@ function SrtFileItem({ file, isDownloading, downloadError, onPreview, onDownload
         <Icon name="file-text" size={18} className="shrink-0 text-zinc-400" />
         <div className="flex-1 min-w-0">
           <p className="font-mono text-xs text-zinc-700 dark:text-zinc-300 truncate">{file.filename}</p>
-          <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Video ID: {file.video_id}</p>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Mã video: {file.video_id}</p>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <button
@@ -111,7 +111,7 @@ function SrtPreviewPopup({ preview, isDownloading, onClose, onDownload }: SrtPre
             <p className="font-mono text-sm font-semibold text-zinc-800 dark:text-zinc-100 truncate">
               {preview.file.filename}
             </p>
-            <p className="text-xs text-zinc-400 mt-0.5">Video ID: {preview.file.video_id}</p>
+            <p className="text-xs text-zinc-400 mt-0.5">Mã video: {preview.file.video_id}</p>
           </div>
           <button
             onClick={onClose}
@@ -347,6 +347,13 @@ export function MyFilesPage() {
           )}
         </button>
       </div>
+
+      <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400 flex items-start gap-1.5">
+        <Icon name="info" size={16} className="shrink-0 mt-0.5" />
+        <span>
+          Nếu bạn không nhớ hoặc không có username, hãy thử tìm kiếm với <strong>anonymous_user</strong>
+        </span>
+      </p>
 
       {/* Error state */}
       {pageState === 'error' && (

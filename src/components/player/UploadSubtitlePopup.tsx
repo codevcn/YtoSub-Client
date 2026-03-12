@@ -140,7 +140,7 @@ export const UploadSubtitlePopup = ({
           {uploadStatus === 'done' && (
             <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-lg flex items-center gap-2 text-sm border border-green-100 dark:border-green-900/30">
               <Icon name="check" size={15} className="shrink-0" />
-              <span>Upload lên server thành công!</span>
+              <span>Tải lên máy chủ thành công!</span>
             </div>
           )}
           {uploadStatus === 'error' && uploadError && (
@@ -160,12 +160,12 @@ export const UploadSubtitlePopup = ({
             ) : uploadStatus === 'done' ? (
               <>
                 <Icon name="check" size={16} />
-                <span>Đã upload</span>
+                <span>Đã tải lên</span>
               </>
             ) : (
               <>
                 <Icon name="upload" size={16} />
-                <span>Upload lên server</span>
+                <span>Tải lên máy chủ</span>
               </>
             )}
           </button>

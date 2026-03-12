@@ -24,7 +24,7 @@ export function HomePage() {
             htmlFor="youtube-url"
             className="block text-center text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
           >
-            YouTube Video URL
+            Đường dẫn video YouTube
           </label>
           <input
             id="youtube-url"
@@ -32,7 +32,7 @@ export function HomePage() {
             value={youtubeUrl}
             onChange={handleUrlChange}
             placeholder="Nhập đường dẫn YouTube tại đây (vd: https://youtube.com/watch?v=...)"
-            className="text-center w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--vcn-main-cl) focus:border-transparent transition-all"
+            className="text-center w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-2 outline-(--main-cl) focus:border-transparent transition-all"
           />
         </div>
       </section>

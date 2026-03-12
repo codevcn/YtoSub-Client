@@ -183,8 +183,8 @@ export function SubtitleUploader({ videoUrl }: SubtitleUploaderProps) {
       <div className="w-full max-w-2xl mx-auto mt-6 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 transition-colors">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Upload Subtitle</h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Chọn file .srt từ máy tính của bạn</p>
+            <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-1">Tải lên phụ đề</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">Chọn file .srt từ thiết bị của bạn</p>
           </div>
           <button
             onClick={handleUploadClick}

@@ -100,11 +100,9 @@ export function TranslatePage() {
   return (
     <main className="px-4 mt-6 max-w-7xl mx-auto">
       {/* 2-panel on desktop (≥900px), stacked on mobile */}
-      <div
-        className="flex flex-col justify-center mobile:flex-row mobile:items-start gap-6"
-      >
+      <div className="flex flex-col justify-center desktop:flex-row desktop:items-start gap-6">
         {/* ── LEFT / TOP: Form section ── */}
-        <div className="w-full mobile:max-w-2xl mobile:shrink-0">
+        <div className="w-full desktop:max-w-2xl desktop:shrink-0">
           <div className="mb-4">
             <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 mb-1">Dịch Phụ Đề</h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -122,7 +120,7 @@ export function TranslatePage() {
                 htmlFor="username"
                 className="flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
               >
-                <span>Username</span>
+                <span>Tên đăng nhập</span>
                 <span className="text-zinc-400 dark:text-zinc-400 font-normal">(tuỳ chọn)</span>
                 <Tooltip
                   content="Tên định danh của bạn. Chỉ gồm chữ cái, số, dấu gạch dưới (3-16 ký tự)."
@@ -212,24 +210,24 @@ export function TranslatePage() {
                 className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-(--main-cl) focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {/* Summary hint */}
-              <div className="border-l-4 border-yellow-500 mt-2 p-3 bg-zinc-50 dark:bg-zinc-900/60 outline-2 outline-yellow-500 dark:outline-yellow-500 rounded-lg text-xs text-zinc-500 dark:text-zinc-400">
-                <p className="font-medium text-zinc-600 dark:text-zinc-300 mb-1">
+              <div className="border-l-4 border-yellow-500 mt-2 p-3 bg-zinc-50 dark:bg-zinc-900/60 outline-2 outline-yellow-500 dark:outline-yellow-500 rounded-lg text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="font-medium text-base dark:text-zinc-300 mb-1">
                   Thêm bản tóm tắt sẽ giúp bản phụ đề được dịch chính xác hơn. Bản tóm tắt nên được viết theo cấu trúc
                   sau:
                 </p>
-                <ul className="list-disc pl-4 space-y-0.5">
-                  <li>Title:</li>
-                  <li>Genre:</li>
-                  <li>Main Characters:</li>
-                  <li>Theme:</li>
-                  <li>Summary (theo video timeline)</li>
+                <ul className="list-disc pl-4 space-y-0.5 text-zinc-300">
+                  <li>Tiêu đề:</li>
+                  <li>Thể loại:</li>
+                  <li>Nhân vật chính:</li>
+                  <li>Chủ đề:</li>
+                  <li>Tóm tắt (viết thành từng đoạn văn bản theo timeline của video)</li>
                 </ul>
                 <button
                   type="button"
                   onClick={handleOpenExample}
-                  className="mt-2 flex items-center gap-1 text-xs font-bold text-(--main-cl) hover:underline"
+                  className="mt-2 flex items-center gap-1 font-bold text-(--main-cl) hover:underline"
                 >
-                  <Icon name="info" size={13} className="shrink-0" />
+                  <Icon name="info" size={16} className="shrink-0" />
                   Xem ví dụ bản tóm tắt
                 </button>
               </div>
@@ -266,7 +264,7 @@ export function TranslatePage() {
 
         {/* ── RIGHT / BOTTOM: Progress section — always rendered when has activity ── */}
         {hasActivity && (
-          <div className="w-full mobile:flex-1 mobile:sticky mobile:top-6">
+          <div className="w-full desktop:flex-1 desktop:sticky desktop:top-6">
             <TranslateProgressPanel
               status={status}
               eventSnapshot={eventSnapshot}

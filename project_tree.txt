@@ -1,23 +1,119 @@
 Tree view of: D:\D-Documents\TOOLs\subtitle-tool\youtube-player
 
+├── .env
 ├── .gitignore
+├── .prettierignore
+├── .prettierrc.json
 ├── README.md
+├── agents
+│   ├── AGENTS.md
+│   └── agent-skills
+│       └── reactjs-vite-coding-standards.md
+├── check-ts.cmd
 ├── dev.cmd
+├── doc
+│   ├── note.txt
+│   └── sse_implement_guide.md
 ├── eslint.config.js
 ├── index.html
+├── inputs
+│   └── create_toaster_guide.md
+├── outputs
+│   └── project-context.md
 ├── package-lock.json
 ├── package.json
 ├── print_project_tree.py
 ├── project_tree.txt
 ├── public
-│   └── vite.svg
+│   ├── apple-touch-icon.png
+│   ├── assets
+│   │   └── fonts
+│   │       ├── Lora
+│   │       │   └── Lora-VariableFont_wght.ttf
+│   │       └── RocherColor
+│   │           └── RocherColor-eaddc164.woff2
+│   ├── favicon-96x96.png
+│   ├── favicon.ico
+│   ├── favicon.svg
+│   ├── site.webmanifest
+│   ├── web-app-manifest-192x192.png
+│   └── web-app-manifest-512x512.png
 ├── src
 │   ├── App.tsx
+│   ├── components
+│   │   ├── common
+│   │   │   ├── AutoSizeTextField.tsx
+│   │   │   ├── Drawer.tsx
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   ├── Icon.tsx
+│   │   │   ├── Loading.tsx
+│   │   │   ├── Toaster.tsx
+│   │   │   └── Tooltip.tsx
+│   │   ├── layout
+│   │   │   └── AppHeader.tsx
+│   │   └── player
+│   │       ├── DesktopPlayer.tsx
+│   │       ├── MobilePlayer.tsx
+│   │       ├── SubtitleBrowser
+│   │       │   ├── PaginationBar.tsx
+│   │       │   ├── PrivateSubtitlePopup.tsx
+│   │       │   ├── SubtitleCard.tsx
+│   │       │   ├── SubtitleContentSection.tsx
+│   │       │   ├── index.tsx
+│   │       │   └── subtitle-browser-types.ts
+│   │       ├── SubtitleCustomPanel.tsx
+│   │       ├── SubtitleOverlay.tsx
+│   │       ├── SubtitleUploader.tsx
+│   │       ├── UploadSubtitlePopup.tsx
+│   │       └── YouTubePlayer.tsx
+│   ├── config
+│   │   ├── api-config.ts
+│   │   └── subtitle-config.ts
+│   ├── dev
+│   │   ├── DevPage.tsx
+│   │   └── mobile
+│   │       ├── Toaster.tsx
+│   │       └── toastify.ts
+│   ├── hooks
+│   │   ├── use-drag-subtitle.ts
+│   │   ├── use-is-mobile.ts
+│   │   └── use-translate-stream.ts
 │   ├── main.tsx
-│   └── styles
-│       ├── _theme.scss
-│       └── index.scss
+│   ├── pages
+│   │   ├── AboutUsPage.tsx
+│   │   ├── HomePage.tsx
+│   │   ├── MyFilesPage.tsx
+│   │   ├── NotFoundPage.tsx
+│   │   └── TranslatePage
+│   │       ├── TranslatePage.tsx
+│   │       └── TranslateProgress.tsx
+│   ├── router.tsx
+│   ├── services
+│   │   ├── file.service.ts
+│   │   ├── subtitle.service.ts
+│   │   └── video.service.ts
+│   ├── store
+│   │   └── subtitle-store.ts
+│   ├── styles
+│   │   ├── _animations.css
+│   │   ├── _theme.css
+│   │   └── index.css
+│   ├── types
+│   │   ├── global.ts
+│   │   └── video.ts
+│   └── utils
+│       ├── algorithms.ts
+│       ├── axios-error-handler.ts
+│       ├── constants.ts
+│       ├── download-file.ts
+│       ├── enums.ts
+│       ├── helpers.ts
+│       ├── local-storage.ts
+│       ├── parse-SRT.ts
+│       └── toast-store.ts
+├── tasks
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
+├── vercel.json
 └── vite.config.ts

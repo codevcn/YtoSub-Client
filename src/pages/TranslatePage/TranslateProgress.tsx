@@ -35,7 +35,8 @@ function ProgressBarSection({ status, eventSnapshot }: ProgressBarSectionProps) 
             <div
               className="h-full w-full rounded-full"
               style={{
-                backgroundImage: 'repeating-linear-gradient(135deg, var(--main-cl) 0px, var(--main-cl) 20px, rgba(0,0,0,0.15) 20px, rgba(0,0,0,0.15) 40px)',
+                backgroundImage:
+                  'repeating-linear-gradient(135deg, var(--main-cl) 0px, var(--main-cl) 20px, rgba(0,0,0,0.15) 20px, rgba(0,0,0,0.15) 40px)',
                 backgroundSize: '40px 100%',
                 animation: 'stripe-slide 0.6s linear infinite'
               }}
@@ -70,6 +71,20 @@ function ProgressBarSection({ status, eventSnapshot }: ProgressBarSectionProps) 
           </div>
         </div>
       )}
+      {/* Extra messages via 'message' event */}
+      {status !== 'done' && eventSnapshot && eventSnapshot.messages && eventSnapshot.messages.length > 0 && (
+        <div className="flex flex-col gap-2 mt-2 bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800">
+          <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-400 mb-0.5">Chi tiết tiến trình:</p>
+          <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
+            {eventSnapshot.messages.map((msg, idx) => (
+              <div key={idx} className="flex items-start gap-2 text-xs text-zinc-600 dark:text-zinc-300">
+                <Icon name="info" size={12} className="shrink-0 mt-0.5 text-zinc-400 dark:text-zinc-300" />
+                <span className="leading-relaxed">{msg}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   )
 }
@@ -93,7 +108,7 @@ function DoneFilesSection({
   downloadErrors,
   onDownloadTranslateFile,
   onDownloadTranscriptFile,
-  onDownloadSummaryFile,
+  onDownloadSummaryFile
 }: DoneFilesSectionProps) {
   const percent = eventSnapshot.percent
 
@@ -216,7 +231,13 @@ function DoneFilesSection({
 
 // ─── Main panel ────────────────────────────────────────────────────────────
 
-export function TranslateProgressPanel({ status, eventSnapshot, result, error, username }: TranslateProgressPanelProps) {
+export function TranslateProgressPanel({
+  status,
+  eventSnapshot,
+  result,
+  error,
+  username
+}: TranslateProgressPanelProps) {
   const [downloadingFiles, setDownloadingFiles] = useState<Set<string>>(new Set())
   const [downloadErrors, setDownloadErrors] = useState<Record<string, string>>({})
 

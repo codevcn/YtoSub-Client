@@ -73,7 +73,7 @@ export function MobilePlayer({ url, subtitles }: MobilePlayerProps) {
   }
 
   return (
-    <div className={`mobile:hidden flex w-full ${isFullscreen ? '' : 'px-6'}`} ref={containerRef}>
+    <div className={`desktop:hidden flex w-full ${isFullscreen ? '' : 'px-4'}`} ref={containerRef}>
       <div
         className={'relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-zinc-800'}
       >
@@ -113,7 +113,7 @@ export function MobilePlayer({ url, subtitles }: MobilePlayerProps) {
         {/* Nút mở rộng / thu nhỏ — luôn hiển thị trên mobile */}
         <button
           onClick={handleFullscreenToggle}
-          title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          title={isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'}
           className={`${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'} ${isFullscreen ? 'bottom-21' : 'bottom-14'} NAME-custom-fullscreen-button absolute right-2 z-20 bg-(--main-cl) active:bg-(--main-cl-hover) text-black rounded-md p-2 border`}
         >
           <Icon name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'} size={22} />

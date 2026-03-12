@@ -15,7 +15,7 @@ export function YouTubePlayer({ url }: YouTubePlayerProps) {
       <div className="w-full aspect-video bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800 shadow-lg overflow-hidden relative">
         <div className="text-zinc-500 flex flex-col items-center gap-3 relative z-10 p-6 text-center">
           <Icon name="play" size={48} className="opacity-50" />
-          <p className="text-lg pb-1">Enter a YouTube URL to start playing</p>
+          <p className="text-lg pb-1">Nhập một đường dẫn video YouTube để bắt đầu xem</p>
         </div>
       </div>
     )

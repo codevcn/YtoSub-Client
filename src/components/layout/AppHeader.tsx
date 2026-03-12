@@ -30,7 +30,7 @@ function Navbar() {
   return (
     <>
       {/* Desktop nav — hiện thẳng trên header khi >= 900px */}
-      <nav className="hidden mobile:flex items-center gap-1">
+      <nav className="hidden desktop:flex items-center gap-1">
         {NAV_ITEMS.map(item => (
           <NavLink
             key={item.to}
@@ -50,7 +50,7 @@ function Navbar() {
       </nav>
 
       {/* Mobile menu — nút hamburger + Drawer khi < 900px */}
-      <div className="mobile:hidden">
+      <div className="desktop:hidden">
         <button
           onClick={handleOpen}
           aria-label="Mở menu"
