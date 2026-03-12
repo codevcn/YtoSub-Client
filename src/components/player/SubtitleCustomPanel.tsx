@@ -112,7 +112,7 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
 
       {/* Panel — slides in from the left */}
       <div
-        className={`absolute left-0 top-0 bottom-0 z-30 transition-transform duration-200 overflow-y-auto ${
+        className={`absolute left-0 top-0 bottom-0 z-30 transition-transform duration-200 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
