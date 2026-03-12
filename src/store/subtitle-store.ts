@@ -1,10 +1,14 @@
 import { create } from 'zustand'
 import type { Subtitle } from '../types/global'
 import { subtitleDefaults } from '../config/subtitle-config'
+import type { LoadedSubtitleMeta } from '../components/player/SubtitleBrowser/subtitle-browser-types'
 
 type SubtitleStore = {
   subtitles: Subtitle[]
   setSubtitles: (subtitles: Subtitle[]) => void
+
+  appliedSubtitleMeta: LoadedSubtitleMeta | null
+  setAppliedSubtitleMeta: (meta: LoadedSubtitleMeta | null) => void
 
   currentTime: number
   setCurrentTime: (time: number) => void
@@ -21,6 +25,9 @@ type SubtitleStore = {
 export const useSubtitleStore = create<SubtitleStore>(set => ({
   subtitles: [],
   setSubtitles: subtitles => set({ subtitles }),
+
+  appliedSubtitleMeta: null,
+  setAppliedSubtitleMeta: meta => set({ appliedSubtitleMeta: meta }),
 
   currentTime: 0,
   setCurrentTime: time => set({ currentTime: time }),

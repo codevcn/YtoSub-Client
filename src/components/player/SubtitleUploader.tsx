@@ -35,6 +35,7 @@ export function SubtitleUploader({ videoUrl }: SubtitleUploaderProps) {
   const fileRef = useRef<File | null>(null)
   const isPickingFileRef = useRef(false)
   const setSubtitles = useSubtitleStore(state => state.setSubtitles)
+  const setAppliedSubtitleMeta = useSubtitleStore(state => state.setAppliedSubtitleMeta)
 
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -131,6 +132,20 @@ export function SubtitleUploader({ videoUrl }: SubtitleUploaderProps) {
   const handleApplySubtitle = () => {
     if (loadedFile) {
       setSubtitles(loadedFile.parsedSubtitles)
+      setTimeout(() => {
+        setAppliedSubtitleMeta({
+          item: {
+            id: Date.now(),
+            video_id: videoUrl,
+            video_link: videoUrl,
+            username: 'System (Local)',
+            file_path: loadedFile.name,
+            is_public: false,
+            created_at: new Date().toISOString()
+          },
+          subtitles: loadedFile.parsedSubtitles
+        })
+      }, 50)
     }
     setShowPopup(false)
   }

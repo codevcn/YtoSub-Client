@@ -20,7 +20,7 @@ export function SubtitleOverlay({ subtitles, deviceType }: SubtitleOverlayProps)
   return (
     <div
       ref={dragRef}
-      className={`NAME-${deviceType} NAME-subtitle-overlay touch-none absolute bottom-3 left-0 right-0 w-full justify-center pointer-events-none z-10`}
+      className={`NAME-${deviceType} NAME-subtitle-overlay touch-none absolute bottom-0.5 left-0 right-0 w-full justify-center pointer-events-none z-10`}
       style={{
         // FIX LỖI RESET KHI RE-RENDER: Dùng hàm getSubtitleTranslateY()
         transform: `translateY(${getSubtitleTranslateY()}px)`,

@@ -9,7 +9,7 @@ import { useSubtitleStore } from '../../../store/subtitle-store'
 import { AxiosErrorHandler } from '../../../utils/axios-error-handler'
 import { toast } from '../../../utils/toast-store'
 import { SUBTITLES_PAGE_SIZE } from '../../../utils/constants'
-import type { BrowserStatus, SearchArgs, LoadedSubtitleMeta } from './subtitle-browser-types'
+import type { BrowserStatus, SearchArgs } from './subtitle-browser-types'
 import { extractVideoId, resolveTimeFrom, resolveTimeTo, FROM_OPTIONS, TO_OPTIONS } from './subtitle-browser-types'
 import { SubtitleCard } from './SubtitleCard'
 import { PaginationBar } from './PaginationBar'
@@ -22,6 +22,9 @@ type SubtitleBrowserProps = {
 
 export function SubtitleBrowser({ videoUrl }: SubtitleBrowserProps) {
   const setSubtitles = useSubtitleStore(state => state.setSubtitles)
+  const loadedSubtitleMeta = useSubtitleStore(state => state.appliedSubtitleMeta)
+  const setLoadedSubtitleMeta = useSubtitleStore(state => state.setAppliedSubtitleMeta)
+  
   const [usernameFilter, setUsernameFilter] = useState('')
   const [timeFromPreset, setTimeFromPreset] = useState('')
   const [timeToPreset, setTimeToPreset] = useState('')
@@ -37,7 +40,6 @@ export function SubtitleBrowser({ videoUrl }: SubtitleBrowserProps) {
   const [applyingPublicId, setApplyingPublicId] = useState<number | null>(null)
   const [publicApplyError, setPublicApplyError] = useState<string | null>(null)
   const [appliedItemId, setAppliedItemId] = useState<number | null>(null)
-  const [loadedSubtitleMeta, setLoadedSubtitleMeta] = useState<LoadedSubtitleMeta | null>(null)
   const contentSectionRef = useRef<HTMLDivElement>(null)
 
   const videoId = extractVideoId(videoUrl)
@@ -302,7 +304,7 @@ export function SubtitleBrowser({ videoUrl }: SubtitleBrowserProps) {
 
       {/* Loaded subtitle content section */}
       {loadedSubtitleMeta && (
-        <div ref={contentSectionRef}>
+        <div ref={contentSectionRef} id="preview-content-section-ref">
           <SubtitleContentSection meta={loadedSubtitleMeta} onClose={() => setLoadedSubtitleMeta(null)} />
         </div>
       )}

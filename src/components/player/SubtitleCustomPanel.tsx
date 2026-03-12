@@ -85,7 +85,7 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
     <>
       {/* Left-edge swipe detection strip (touch devices) */}
       <div
-        className="absolute left-0 top-0 bottom-0 w-10 z-20"
+        className="absolute left-0 top-0 bottom-0 w-10 z-20 pointer-events-none"
         onTouchStart={handleSwipeTouchStart}
         onTouchEnd={handleSwipeTouchEnd}
       />
@@ -125,7 +125,7 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
             <Icon name="close" size={20} />
           </button>
 
-          <div className="w-8 h-px bg-white/20 shrink-0" />
+          <div className="w-8 h-px bg-white/50 shrink-0" />
 
           {/* Main panel view */}
           {view === 'main' && (
@@ -138,7 +138,7 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
                 <Icon name="arrow-down" size={20} />
               </button>
 
-              <div className="w-8 h-px bg-white/20 shrink-0" />
+              <div className="w-8 h-px bg-white/50 shrink-0" />
 
               <button
                 className={`${BTN_CLASS} text-base font-bold leading-none`}
@@ -149,7 +149,7 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
               </button>
 
               <button className={BTN_CLASS} onClick={handleOpenBgOpacity} title="Background opacity">
-                <Icon name="bg-opacity" size={20} />
+                <Icon name="bg-opacity" size={22} />
               </button>
             </>
           )}
@@ -165,7 +165,10 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
                 +
               </button>
 
-              <span className="text-white/80 text-xs text-center leading-tight select-none">{subtitleFontSize}px</span>
+              <span className="text-white/80 text-sm text-center leading-tight select-none">
+                {subtitleFontSize}
+                <span>px</span>
+              </span>
 
               <button
                 className={`${BTN_CLASS} text-3xl font-bold leading-none`}
@@ -175,12 +178,13 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
                 -
               </button>
 
+              <span className="border-t border-white/50 w-8"></span>
               <button
-                className="mt-auto py-1.5 px-2 text-white hover:text-white hover:bg-white/10 rounded-md transition-colors"
+                className="py-1.5 px-2 text-white hover:text-white hover:bg-white/10 rounded-md transition-colors"
                 onClick={handleBack}
                 title="Back"
               >
-                <Icon name="chevron-left" size={20} />
+                <Icon name="chevron-left" size={22} />
               </button>
             </>
           )}
@@ -196,7 +200,7 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
                 +
               </button>
 
-              <span className="text-white/80 text-xs text-center leading-tight select-none">
+              <span className="text-white/80 text-sm text-center leading-tight select-none">
                 <span>{Math.round(subtitleBgOpacity * 100)}</span>%
               </span>
 
@@ -208,12 +212,13 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
                 -
               </button>
 
+              <span className="border-t border-white/50 w-8"></span>
               <button
-                className="mt-auto py-1.5 px-2 text-white hover:text-white hover:bg-white/10 rounded-md transition-colors"
+                className="py-1.5 px-2 text-white hover:text-white hover:bg-white/10 rounded-md transition-colors"
                 onClick={handleBack}
                 title="Back"
               >
-                <Icon name="chevron-left" size={20} />
+                <Icon name="chevron-left" size={22} />
               </button>
             </>
           )}

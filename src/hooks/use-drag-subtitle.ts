@@ -10,14 +10,14 @@ export function getSubtitleTranslateY(): number {
 }
 
 export function applyTranslateYToDOM(value: number): void {
-  const el = document.querySelector(
+  const el = document.querySelector<HTMLElement>(
     '.NAME-subtitle-overlay' + (isMobileScreen() ? '.NAME-mobile' : '.NAME-desktop')
-  ) as HTMLElement | null
+  )
 
   if (el) {
     // Tùy logic bạn muốn giới hạn kéo lên/xuống mà dùng Min/Max phù hợp
     // Ví dụ: giới hạn không cho kéo lên quá offsetYMin
-    const clamped = Math.max(subtitleConstraints.offsetYMin, value)
+    const clamped = Math.min(subtitleConstraints.offsetYMin, value)
     el.style.transform = `translateY(${clamped}px)`
     _translateY = clamped
   }
@@ -25,11 +25,13 @@ export function applyTranslateYToDOM(value: number): void {
 
 export function moveSubtitleUp(): void {
   // Di chuyển lên tức là translateY giảm (âm)
+  console.log('>>> _translateY 1:', _translateY)
   applyTranslateYToDOM(_translateY - subtitleConstraints.translateStep)
 }
 
 export function moveSubtitleDown(): void {
   // Di chuyển xuống tức là translateY tăng (dương)
+  console.log('>>> _translateY 2:', _translateY)
   applyTranslateYToDOM(_translateY + subtitleConstraints.translateStep)
 }
 

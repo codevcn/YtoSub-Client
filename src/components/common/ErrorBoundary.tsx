@@ -84,7 +84,7 @@ export function ErrorBoundary() {
         }}
       />
 
-      <div className="relative z-10 flex flex-col items-center gap-5 max-w-sm w-full text-center">
+      <div className="relative z-10 flex flex-col items-center gap-5 max-w-md w-full text-center">
         {/* Robot bay lơ lửng */}
         <div className="text-(--main-cl)" style={{ animation: 'float-bob 3s ease-in-out infinite' }}>
           <BrokenBotIcon />
@@ -95,7 +95,7 @@ export function ErrorBoundary() {
           <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
             <circle cx="4" cy="4" r="4" fill="currentColor" className="text-(--main-cl) animate-pulse" />
           </svg>
-          <span className="text-[11px] font-mono font-bold text-(--main-cl) tracking-[0.18em] uppercase">
+          <span className="text-xs font-mono font-bold text-(--main-cl) tracking-[0.18em] uppercase">
             {errorStatus}
           </span>
         </div>
@@ -105,12 +105,12 @@ export function ErrorBoundary() {
             className="text-2xl font-bold text-zinc-50 leading-tight"
             style={{ animation: 'glitch-shake 5s ease-in-out infinite' }}
           >
-            Úi, có bug chui vào rồi!
+            Úi, có lỗi xảy ra!
           </h1>
           <p className="text-sm text-zinc-400 leading-relaxed">
-            Hệ thống đang gặp sự cố ngoài ý muốn.
+            Trang web vừa gặp sự cố ngoài ý muốn.
             <br />
-            Con bug này đang cười hehe&nbsp;— nhưng ta sẽ xử lý ngay.
+            Đừng lo, chúng tôi đã báo cáo cho quản trị viên. Hãy thử tải lại trang sau giây lát.
           </p>
         </div>
 
