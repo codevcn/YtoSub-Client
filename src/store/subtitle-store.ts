@@ -38,5 +38,5 @@ export const useSubtitleStore = create<SubtitleStore>(set => ({
 
   setSubtitleOffsetY: value => set({ subtitleOffsetY: value }),
   setSubtitleFontSize: value => set({ subtitleFontSize: value }),
-  setSubtitleBgOpacity: value => set({ subtitleBgOpacity: value })
+  setSubtitleBgOpacity: value => set({ subtitleBgOpacity: value }),
 }))

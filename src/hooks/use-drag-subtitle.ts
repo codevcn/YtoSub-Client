@@ -10,7 +10,7 @@ export function getSubtitleTranslateY(): number {
 }
 
 export function applyTranslateYToDOM(value: number): void {
-  const el = document.querySelector<HTMLElement>(
+  const el = document.body.querySelector<HTMLElement>(
     '.NAME-subtitle-overlay' + (isMobileScreen() ? '.NAME-mobile' : '.NAME-desktop')
   )
 
@@ -25,13 +25,11 @@ export function applyTranslateYToDOM(value: number): void {
 
 export function moveSubtitleUp(): void {
   // Di chuyển lên tức là translateY giảm (âm)
-  console.log('>>> _translateY 1:', _translateY)
   applyTranslateYToDOM(_translateY - subtitleConstraints.translateStep)
 }
 
 export function moveSubtitleDown(): void {
   // Di chuyển xuống tức là translateY tăng (dương)
-  console.log('>>> _translateY 2:', _translateY)
   applyTranslateYToDOM(_translateY + subtitleConstraints.translateStep)
 }
 

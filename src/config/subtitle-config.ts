@@ -2,6 +2,7 @@ export const subtitleDefaults = {
   offsetY: 0,
   fontSize: 12,
   bgOpacity: 0.6,
+  textColor: '#ffffff', // dùng bởi applyTextColorToDOM trong SubtitleTextColorPanel
 }
 
 export const subtitleConstraints = {

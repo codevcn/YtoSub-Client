@@ -3,6 +3,7 @@ import { Icon } from '../common/Icon'
 import { useSubtitleStore } from '../../store/subtitle-store'
 import { subtitleConstraints } from '../../config/subtitle-config'
 import { moveSubtitleUp, moveSubtitleDown } from '../../hooks/use-drag-subtitle'
+import { SubtitleTextColorPanel } from './SubtitleTextColorPanel'
 
 type PanelView = 'main' | 'font-size' | 'bg-opacity'
 
@@ -111,7 +112,7 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
 
       {/* Panel — slides in from the left */}
       <div
-        className={`absolute left-0 top-0 bottom-0 z-30 transition-transform duration-200 ${
+        className={`absolute left-0 top-0 bottom-0 z-30 transition-transform duration-200 overflow-y-auto ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -151,6 +152,10 @@ export function SubtitleCustomPanel({ showControls }: SubtitleCustomPanelProps) 
               <button className={BTN_CLASS} onClick={handleOpenBgOpacity} title="Background opacity">
                 <Icon name="bg-opacity" size={22} />
               </button>
+
+              <div className="w-8 h-px bg-white/50 shrink-0" />
+
+              <SubtitleTextColorPanel btnClassName={BTN_CLASS} />
             </>
           )}
 

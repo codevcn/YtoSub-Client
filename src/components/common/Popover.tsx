@@ -12,9 +12,10 @@ export type PopoverProps = {
   position?: PopoverPosition
   /** Custom class cho phần content */
   className?: string
+  closeBtnSize?: number
 }
 
-export function Popover({ trigger, children, position = 'bottom', className = '' }: PopoverProps) {
+export function Popover({ trigger, children, position = 'bottom', className = '', closeBtnSize = 16 }: PopoverProps) {
   const [isOpen, setIsOpen] = useState(false)
   const popoverRef = useRef<HTMLDivElement>(null)
 
@@ -72,10 +73,10 @@ export function Popover({ trigger, children, position = 'bottom', className = ''
         {/* Nút đóng ở góc */}
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-2 right-2 p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+          className="absolute top-1 right-1 p-1 text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
           aria-label="Đóng popover"
         >
-          <Icon name="close" size={16} />
+          <Icon name="close" size={closeBtnSize} />
         </button>
 
         <div className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">{children}</div>
