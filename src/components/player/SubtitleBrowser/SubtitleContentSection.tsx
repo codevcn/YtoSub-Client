@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Icon } from '../../common/Icon'
+import { CopyContentButton } from '../../common/CopyContentButton'
 import type { LoadedSubtitleMeta } from './subtitle-browser-types'
 import { extractFilename, formatSeconds } from './subtitle-browser-types'
 
@@ -11,6 +12,11 @@ type SubtitleContentSectionProps = {
 export function SubtitleContentSection({ meta, onClose }: SubtitleContentSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
   const filename = extractFilename(meta.item.file_path)
+
+  // Generate a plain text string representing the entire subtitle content
+  const fullTextToCopy = meta.subtitles
+    .map(sub => `[${formatSeconds(sub.start)} -> ${formatSeconds(sub.end)}]\n${sub.text.replace(/<[^>]*>?/gm, '')}`)
+    .join('\n\n')
 
   return (
     <div ref={sectionRef} className="flex flex-col gap-3">
@@ -32,12 +38,15 @@ export function SubtitleContentSection({ meta, onClose }: SubtitleContentSection
       </div>
 
       {/* File info bar */}
-      <div className="flex items-center gap-3 px-3 py-2 bg-zinc-50 dark:bg-zinc-800/60 rounded-lg border border-zinc-200 dark:border-zinc-700">
-        <Icon name="user" size={13} className="text-zinc-400 shrink-0" />
-        <span className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{meta.item.username}</span>
-        <span className="mx-1 text-zinc-300 dark:text-zinc-600 select-none">·</span>
-        <Icon name="file-text" size={13} className="text-zinc-400 shrink-0" />
-        <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 truncate">{filename}</span>
+      <div className="flex items-center justify-between gap-3 px-3 py-2 bg-zinc-50 dark:bg-zinc-800/60 rounded-lg border border-zinc-200 dark:border-zinc-700">
+        <div className="flex items-center gap-2 min-w-0">
+          <Icon name="user" size={13} className="text-zinc-400 shrink-0" />
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{meta.item.username}</span>
+          <span className="mx-1 text-zinc-300 dark:text-zinc-600 select-none">·</span>
+          <Icon name="file-text" size={13} className="text-zinc-400 shrink-0" />
+          <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 truncate">{filename}</span>
+        </div>
+        <CopyContentButton content={fullTextToCopy} className="shrink-0" />
       </div>
 
       {/* Subtitle list */}
